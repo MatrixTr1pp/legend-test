@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Генератор VIP-сертификатов ВК</title>
+  <!-- Подгружаем шрифт и html2canvas -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <script src=" https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js "></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(135deg, #000000, #1a1a2e, #16213e);
+      color: white;
+      text-align: center;
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 3em;
+      color: gold;
+      margin-bottom: 15px;
+      text-shadow: 0 0 20px rgba(255, 215, 0, 0.9);
+    }
+    p {
+      color: #bbb;
+      max-width: 700px;
+      margin: 0 auto 40px;
+      font-size: 1.1em;
+      line-height: 1.6;
+    }
+
+    .form {
+      max-width: 600px;
+      margin: 30px auto;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 30px;
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+    }
+    input {
+      width: 90%;
+      padding: 15px;
+      margin: 12px 0;
+      border: none;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      font-size: 16px;
+      text-align: center;
+      outline: none;
+      transition: 0.3s;
+    }
+    input::placeholder {
+      color: #888;
+    }
+    input:focus {
+      background: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+    }
+
+    button {
+      background: linear-gradient(to right, #fdd835, #ffb300);
+      color: black;
+      border: none;
+      padding: 14px 30px;
+      margin: 15px 10px;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+    }
+    button:hover {
+      background: linear-gradient(to right, #ffca28, #ffa000);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+    }
+    button:active {
+      transform: translateY(0);
+    }
+
+    /* СЕРТИФИКАТ */
+    .cert-container {
+      display: none;
+      width: 900px;
+      height: 600px;
+      margin: 50px auto;
+      position: relative;
+      border-radius: 25px;
+      overflow: hidden;
+      box-shadow: 0 0 60px rgba(255, 215, 0, 0.8);
+      border: 3px solid gold;
+      /* Крутой встроенный фон — без внешних ссылок */
+      background: 
+        radial-gradient(circle at 30% 30%, rgba(255, 215, 0, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 70% 70%, rgba(255, 165, 0, 0.1) 0%, transparent 50%),
+        linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    }
+    .cert-content {
+      padding: 60px 50px;
+      text-align: center;
+      color: white;
+      height: 100%;
+      position: relative;
+      z-index: 2;
+    }
+    .cert-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 60px;
+      color: gold;
+      margin: 10px 0 10px;
+      text-shadow: 0 0 20px rgba(0, 0, 0, 0.9);
+    }
+    .cert-subtitle {
+      font-size: 36px;
+      color: #ffd700;
+      margin: 5px 0 40px;
+      letter-spacing: 3px;
+    }
+    .cert-name {
+      font-size: 48px;
+      font-weight: 700;
+      margin: 25px 0;
+      color: white;
+      text-shadow: 0 0 12px rgba(0, 0, 0, 0.8);
+    }
+    .cert-id {
+      font-size: 28px;
+      margin: 15px 0;
+      color: #eee;
+    }
+    .cert-rank {
+      font-size: 32px;
+      color: #ffcc00;
+      margin: 20px 0;
+      font-weight: 700;
+      text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+    }
+    .cert-badges {
+      font-size: 24px;
+      color: #ffdd00;
+      margin: 35px 0;
+      font-weight: bold;
+      text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+      line-height: 1.5;
+    }
+    .cert-date {
+      font-size: 20px;
+      color: #ccc;
+      margin-top: 40px;
+      font-weight: bold;
+    }
+
+    .actions {
+      max-width: 900px;
+      margin: 20px auto;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>✨ Генератор VIP-сертификата Легенды ВК</h1>
+  <p>Заполните данные — получите официальный сертификат легенды. Можно скачать или поделиться.</p>
+
+  <div class="form">
+    <input type="text" id="fullName" placeholder="Имя Фамилия" />
+    <input type="text" id="vkId" placeholder="ID или никнейм ВК (например: durov)" />
+    <input type="text" id="rank" placeholder="Звание (например: Мем-мастер)" />
+    <input type="text" id="issueDate" placeholder="Дата выдачи (например: 5 апреля 2025)" />
+    <button onclick="generateCert()">🔥 Сгенерировать сертификат</button>
+  </div>
+
+  <!-- СЕРТИФИКАТ -->
+  <div class="cert-container" id="certificate">
+    <div class="cert-content">
+      <div class="cert-title">ОФИЦИАЛЬНЫЙ СЕРТИФИКАТ</div>
+      <div class="cert-subtitle">ЛЕГЕНДЫ ВК</div>
+      <div class="cert-name" id="certName">[ИМЯ ФАМИЛИЯ]</div>
+      <div class="cert-id" id="certId">ID: [никнейм]</div>
+      <div class="cert-rank" id="certRank">Звание: [не указано]</div>
+      <div class="cert-badges">
+        ВЫДАН ЗА НЕРЕАЛЬНУЮ КРУТОСТЬ
+      </div>
+      <div class="cert-date" id="certDate">Дата выдачи: не указана</div>
+    </div>
+  </div>
+
+  <!-- КНОПКИ -->
+  <div class="actions">
+    <button onclick="downloadPNG()" id="downloadBtn" disabled>💾 Скачать как PNG</button>
+    <button onclick="shareLink()" id="shareBtn" disabled>🔗 Поделиться ссылкой</button>
+  </div>
+
+  <script>
+    function generateCert() {
+      const name = document.getElementById("fullName").value.trim();
+      const id = document.getElementById("vkId").value.trim();
+      const rank = document.getElementById("rank").value.trim() || "не указано";
+      const date = document.getElementById("issueDate").value.trim() || "не указана";
+
+      if (!name || !id || !date) {
+        alert("Заполните все поля: имя, ID и дату");
+        return;
+      }
+
+      document.getElementById("certName").innerText = name;
+      document.getElementById("certId").innerText = "ID: " + id;
+      document.getElementById("certRank").innerText = "Звание: " + rank;
+      document.getElementById("certDate").innerText = "Дата выдачи: " + date;
+
+      document.getElementById("certificate").style.display = "block";
+      document.getElementById("downloadBtn").disabled = false;
+      document.getElementById("shareBtn").disabled = false;
+    }
+
+    function downloadPNG() {
+      const cert = document.getElementById("certificate");
+      html2canvas(cert, {
+        backgroundColor: null,
+        scale: 2,
+        useCORS: true,
+        allowTaint: true
+      }).then(canvas => {
+        const link = document.createElement("a");
+        link.download = "VIP_Легенда_" + Date.now() + ".png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      });
+    }
+
+    function shareLink() {
+      const name = document.getElementById("fullName").value.trim();
+      const id = document.getElementById("vkId").value.trim();
+      const rank = document.getElementById("rank").value.trim();
+      const date = document.getElementById("issueDate").value.trim();
+
+      if (!name || !id || !date) {
+        alert("Сначала сгенерируй сертификат!");
+        return;
+      }
+
+      const url = new URL(window.location.href.split('?')[0]);
+      url.searchParams.set("name", encodeURIComponent(name));
+      url.searchParams.set("id", encodeURIComponent(id));
+      url.searchParams.set("rank", encodeURIComponent(rank));
+      url.searchParams.set("date", encodeURIComponent(date));
+
+      prompt("🔗 Скопируй ссылку и отправь:", url.toString());
+    }
+
+    // При открытии с параметрами
+    window.onload = function() {
+      const params = new URLSearchParams(window.location.search);
+      const name = params.get("name");
+      const id = params.get("id");
+      const rank = params.get("rank");
+      const date = params.get("date");
+
+      if (name && id && date) {
+        document.getElementById("fullName").value = decodeURIComponent(name);
+        document.getElementById("vkId").value = decodeURIComponent(id);
+        document.getElementById("rank").value = decodeURIComponent(rank);
+        document.getElementById("issueDate").value = decodeURIComponent(date);
+        generateCert();
+      }
+    };
+  </script>
+
+</body>
+</html>
