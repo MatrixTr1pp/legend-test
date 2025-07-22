@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Тест на легендарность ВК</title>
+  <style>
+    body {
+      background: #111;
+      color: white;
+      font-family: 'Comic Sans MS', cursive;
+      text-align: center;
+      padding: 50px;
+    }
+    h1 {
+      font-size: 2em;
+      color: #ff4081;
+    }
+    .btn {
+      background: gold;
+      color: black;
+      padding: 15px 25px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 20px;
+      display: inline-block;
+      font-weight: bold;
+    }
+    .result {
+      margin-top: 30px;
+      font-size: 1.5em;
+      color: #ccc;
+    }
+    .vip {
+      color: gold;
+      font-size: 2em;
+    }
+    img {
+      max-width: 200px;
+      margin: 20px auto;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🔥 Проверь, насколько ты легендарен в ВК</h1>
+  <button onclick="check()" class="btn">Проверить уровень легендарности</button>
+
+  <div class="result" id="result"></div>
+
+  <script>
+    function check() {
+      const results = [
+        "Вы 0/10. Даже мама не любит вас.",
+        "Вы 1/10. Ты — баг в системе.",
+        "Вы 2/10. Ты — ошибка природы.",
+        "Вы 3/10. Ты — позор семьи.",
+        "Вы 4/10. Ты — почти человек.",
+        "Вы 5/10. Ты — как обычный Wi-Fi.",
+        "Вы 6/10. Ты — почти топ.",
+        "Вы 7/10. Ты — почти легенда.",
+        "Вы 8/10. Ты — почти легенда с кайфом.",
+        "Вы 9/10. Ты — почти легенда с мемами."
+      ];
+
+      const random = Math.floor(Math.random() * results.length);
+      const text = results[random];
+
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = `
+        <p>${text}</p>
+        <p style="color:gold; font-weight:bold;">Хочешь стать 10/10 ЛЕГЕНДОЙ? Оплати 199₽ и получи VIP-результат!</p>
+        <button class="btn" onclick="pay()">Купить VIP-результат</button>
+      `;
+    }
+
+    function pay() {
+      alert("Переведи 199 рублей через СБП на номер +7 (XXX) XXX-XX-XX (банк Тинькофф). В комментарии напиши свой ID ВК. После оплаты напиши мне в ВК — и получишь результат!");
+    }
+  </script>
+
+</body>
+</html>
